@@ -516,3 +516,7 @@ export async function codeQlVersionAbove(
 ): Promise<boolean> {
   return semver.gte(await codeql.getVersion(), requiredVersion);
 }
+
+export async function delay(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
