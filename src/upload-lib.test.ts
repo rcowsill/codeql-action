@@ -185,4 +185,14 @@ test("validateUniqueCategory", (t) => {
 
   t.notThrows(() => uploadLib.validateUniqueCategory("def"));
   t.throws(() => uploadLib.validateUniqueCategory("def"));
+
+  // Our category sanitization is not perfect. Here are some examples
+  // of where we see false clashes
+  t.notThrows(() => uploadLib.validateUniqueCategory("abc/def"));
+  t.throws(() => uploadLib.validateUniqueCategory("abc@def"));
+  t.throws(() => uploadLib.validateUniqueCategory("abc_def"));
+  t.throws(() => uploadLib.validateUniqueCategory("abc def"));
+
+  // this one is fine
+  t.notThrows(() => uploadLib.validateUniqueCategory("abc_ def"));
 });
