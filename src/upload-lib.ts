@@ -343,16 +343,7 @@ async function uploadFiles(
   logger.startGroup("Uploading results");
   logger.info(`Processing sarif files: ${JSON.stringify(sarifFiles)}`);
 
-  if (util.isActions()) {
-    // This check only works on actions as env vars don't persist between calls to the runner
-    const sentinelEnvVar = "CODEQL_UPLOAD_SARIF";
-    if (process.env[sentinelEnvVar]) {
-      throw new Error(
-        "Aborting upload: only one run of the codeql/analyze or codeql/upload-sarif actions is allowed per job"
-      );
-    }
-    core.exportVariable(sentinelEnvVar, sentinelEnvVar);
-  }
+  validateUniqueCategory(category);
 
   // Validate that the files we were asked to upload are all valid SARIF files
   for (const file of sarifFiles) {
@@ -408,4 +399,20 @@ async function uploadFiles(
     zipped_upload_size_bytes: zippedUploadSizeBytes,
     num_results_in_sarif: numResultInSarif,
   };
+}
+
+export function validateUniqueCategory(category: string | undefined) {
+  if (util.isActions()) {
+    // This check only works on actions as env vars don't persist between calls to the runner
+    const sentinelEnvVar = `CODEQL_UPLOAD_SARIF + ${
+      category ? `_${category}` : ""
+    }`;
+    if (process.env[sentinelEnvVar]) {
+      throw new Error(
+        "Aborting upload: only one run of the codeql/analyze or codeql/upload-sarif actions is allowed per job per category. " +
+          "Please specify a unique `category` to call this action multiple times."
+      );
+    }
+    core.exportVariable(sentinelEnvVar, sentinelEnvVar);
+  }
 }

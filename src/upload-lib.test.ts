@@ -175,3 +175,14 @@ test("populateRunAutomationDetails", (t) => {
   );
   t.deepEqual(modifiedSarif, expectedSarif);
 });
+
+test("validateUniqueCategory", (t) => {
+  t.notThrows(() => uploadLib.validateUniqueCategory(undefined));
+  t.throws(() => uploadLib.validateUniqueCategory(undefined));
+
+  t.notThrows(() => uploadLib.validateUniqueCategory("abc"));
+  t.throws(() => uploadLib.validateUniqueCategory("abc"));
+
+  t.notThrows(() => uploadLib.validateUniqueCategory("def"));
+  t.throws(() => uploadLib.validateUniqueCategory("def"));
+});
