@@ -47,7 +47,8 @@ jobs:
         tools: ${{ steps.prepare-test.outputs.tools-url }}
     - name: Build code
       shell: bash
-      run: ./build.sh
+      run: env --unset=LD_PRELOAD --unset=CODEQL_EXTRACTOR_CPP_SOURCE_ARCHIVE_DIR
+        --unset=CODEQL_EXTRACTOR_CSHARP_SOURCE_ARCHIVE_DIR ./build.sh
     - uses: ./../action/analyze
       id: analysis
       env:
